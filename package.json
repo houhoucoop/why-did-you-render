@@ -1,5 +1,5 @@
 {
-  "name": "@welldone-software/why-did-you-render",
+  "name": "@houhoucoop/why-did-you-render",
   "version": "7.0.1",
   "description": "Monkey patches React to notify you about avoidable re-renders.",
   "types": "types.d.ts",
@@ -16,7 +16,7 @@
     "Vitali Zaidman <vzaidman@gmail.com> (https://github.com/vzaidman)"
   ],
   "license": "MIT",
-  "repository": "https://github.com/welldone-software/why-did-you-render",
+  "repository": "https://github.com/houhoucoop/why-did-you-render",
   "keywords": [
     "react",
     "component",

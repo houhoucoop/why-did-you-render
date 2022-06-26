@@ -3,6 +3,8 @@ import wdyrStore from './wdyrStore';
 import { diffTypes, diffTypesDescriptions } from './consts';
 import printDiff from './printDiff';
 
+import { merge } from 'lodash'
+
 const moreInfoUrl = 'http://bit.ly/wdyr02';
 const moreInfoHooksUrl = 'http://bit.ly/wdyr3';
 
@@ -76,6 +78,18 @@ export default function defaultNotifier(updateInfo) {
     return;
   }
 
+  if (!window.whyDidYouRender) { window.whyDidYouRender = {} }
+  if (!window.whyDidYouRender.hasOwnProperty(displayName)) {
+    window.whyDidYouRender = {
+      ...window.whyDidYouRender,
+      [displayName] : {
+        props: [],
+        state: [],
+        hook: []
+      }
+    }
+  }
+
   wdyrStore.options.consoleGroup(`%c${displayName}`, `color: ${wdyrStore.options.titleColor};`);
 
   let prefixMessage = 'Re-rendered because';
@@ -90,6 +104,14 @@ export default function defaultNotifier(updateInfo) {
       values: { prev: prevProps, next: nextProps },
     });
     prefixMessage = 'And because';
+
+    window.whyDidYouRender[displayName].props = [
+      {
+        differences: reason.propsDifferences,
+        values: { prev: prevProps, next: nextProps },
+      },
+      ...window.whyDidYouRender[displayName].props
+    ]
   }
 
   if (reason.stateDifferences) {
@@ -101,6 +123,14 @@ export default function defaultNotifier(updateInfo) {
       differences: reason.stateDifferences,
       values: { prev: prevState, next: nextState },
     });
+
+    window.whyDidYouRender[displayName].state = [
+      {
+        differences: reason.stateDifferences,
+        values: { prev: prevState, next: nextState },
+      },
+      ...window.whyDidYouRender[displayName].state
+    ]
   }
 
   if (reason.hookDifferences) {
@@ -113,6 +143,15 @@ export default function defaultNotifier(updateInfo) {
       values: { prev: prevHook, next: nextHook },
       hookName,
     });
+
+    window.whyDidYouRender[displayName].hook = [
+      {
+        differences: reason.hookDifferences,
+        values: { prev: prevHook, next: nextHook },
+        hookName
+      },
+      ...window.whyDidYouRender[displayName].hook
+    ]
   }
 
   if (reason.propsDifferences && reason.ownerDifferences) {
